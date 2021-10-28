@@ -8,14 +8,14 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { ColorSchemeName, Pressable } from 'react-native';
-
+import { ColorSchemeName, Pressable, View } from 'react-native';
+import {Octicons, MaterialCommunityIcons} from '@expo/vector-icons';
+import MainTabNavigator from './MainTabNavigator';
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
 import ModalScreen from '../screens/ModalScreen';
 import NotFoundScreen from '../screens/NotFoundScreen';
-import TabOneScreen from '../screens/TabOneScreen';
-import TabTwoScreen from '../screens/TabTwoScreen';
+import ChatsScreen from '../screens/ChatsScreen';
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
 
@@ -37,12 +37,37 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function RootNavigator() {
   return (
-    <Stack.Navigator>
-      <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
+    <Stack.Navigator screenOptions={{
+      headerStyle: {
+        backgroundColor: Colors.light.tint,
+        shadowOpacity: 0,
+        elevation: 0,
+      },
+      headerTintColor: Colors.light.background,
+      headerTitleAlign: 'left',
+      headerTitleStyle: {
+        fontWeight: 'bold',
+      }
+    }}>
+      <Stack.Screen 
+       name="Root" 
+       component={MainTabNavigator}
+       options={{
+         title: "WhatsApp",
+         headerRight: () => (
+           <View style={{
+            flexDirection: 'row',
+            width: 60,
+            justifyContent: 'space-between',
+            marginRight: 10,
+          }}>
+            <Octicons name="search" size={22} color={'white'} />
+              <MaterialCommunityIcons name="dots-vertical" size={22} color={'white'} />
+          </View>
+         )
+       }}
+       />
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
-      <Stack.Group screenOptions={{ presentation: 'modal' }}>
-        <Stack.Screen name="Modal" component={ModalScreen} />
-      </Stack.Group>
     </Stack.Navigator>
   );
 }
@@ -64,7 +89,7 @@ function BottomTabNavigator() {
       }}>
       <BottomTab.Screen
         name="TabOne"
-        component={TabOneScreen}
+        component={ChatsScreen}
         options={({ navigation }: RootTabScreenProps<'TabOne'>) => ({
           title: 'Tab One',
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
@@ -83,14 +108,6 @@ function BottomTabNavigator() {
             </Pressable>
           ),
         })}
-      />
-      <BottomTab.Screen
-        name="TabTwo"
-        component={TabTwoScreen}
-        options={{
-          title: 'Tab Two',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-        }}
       />
     </BottomTab.Navigator>
   );
